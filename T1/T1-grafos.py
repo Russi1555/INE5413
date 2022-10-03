@@ -1,6 +1,9 @@
 
 #TODAS AS BUSCAS E CHECAGENS SÃO FEITAS COM O INDICE NÃO O ROTULO
 
+import math
+from collections import deque
+
 class Grafo:
     def __init__(self, arquivo):
         self.V = {} #{ "a": {"rotulo": 'zap', "indice":2}, "b": {"rotulo": "whats", "indice": 5}, "c": {"rotulo": "azul", "indice": 7}} #deletar essa inicialização. puramente pra teste
@@ -26,9 +29,6 @@ class Grafo:
                 elif "*edges" not in linhas:
                     a,b,peso = linhas.strip().split(" ")
                     self.A.append([a,b,peso])
-
-        print(self.V)
-        print(self.A)
 
     def qtdVertices(self): #Funciona
         return len(self.V.keys())
@@ -68,7 +68,43 @@ class Grafo:
                     vizinhos.append(self.V.get(aresta[0]))
         return vizinhos
 
+    def busca_em_largura(self, s):
+        visitados = [False] * (self.qtdVertices()+1)
+        distancia = [math.inf] * (self.qtdVertices()+1)
+        antecessor = [None] * (self.qtdVertices()+1)
+        fila = []
+        niveis = {0: [s]}
+
+
+        visitados[s] = True
+        distancia[s] = 0
+        fila.append(self.V.get(str(s)))
+
+
+        while len(fila) > 0:
+            u = fila.pop(0)
+            for vertice in self.vizinhos(u.get("indice")):
+                j = int(vertice.get("indice"))
+                if not visitados[j]:
+                    visitados[j] = True
+                    distancia[j] = distancia[int(u.get("indice"))] + 1
+                    antecessor[j] = u
+                    fila.append(vertice)
+
+                    encontrados_no_nivel = niveis.get(distancia[j], [])
+                    encontrados_no_nivel.append(j)
+                    niveis.update({distancia[int(vertice.get("indice"))] : encontrados_no_nivel})
+
+        for key, value in niveis.items():
+            print(str(key) + ":", str(value)[1:-1])
+
+
+
+
+
+
 G = Grafo("dolphins.net")
+G.busca_em_largura(1)
 
 
 
