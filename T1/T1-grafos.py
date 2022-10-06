@@ -103,8 +103,40 @@ class Grafo:
 
 
 
-G = Grafo("dolphins.net")
-G.busca_em_largura(1)
+
+    def floyd_warshall(self):
+        n_vertices = self.qtdVertices()
+        distancias = []
+        for i in range(n_vertices):
+            distancia_u_v = []
+            for j in range(n_vertices):
+                if i == j :
+                    distancia_u_v.append(0)
+                else:
+                    distancia_u_v.append(math.inf)
+            distancias.append(distancia_u_v)
+        
+        for aresta in self.A:
+            distancias[aresta[0]-1][aresta[1]-1] = aresta[2]
+            distancias[aresta[1]-1][aresta[0]-1] = aresta[2]
+
+        for i in range(len(distancias)):
+            for linha in range(len(distancias)):
+                for coluna in range(len(distancias[linha])):
+                    distancias[linha][coluna] = min(distancias[linha][coluna], distancias[linha][i] + distancias[i][coluna])
+
+        c_linha = 1
+        for linha in distancias:
+            print(str(c_linha) + ":",  str(linha)[1:-1])
+            c_linha += 1
+
+
+
+
+
+
+G = Grafo("email.net")
+G.floyd_warshall
 
 
 
